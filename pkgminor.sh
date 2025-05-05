@@ -4,42 +4,42 @@
 search_and_install() {
     local pkg="$1"
 
-    # Try pacman if enabled
+    # Pacman
     if [ "$use_pacman" == "enabled" ] && pacman -Si "$pkg" &>/dev/null; then
         echo "Found in pacman! Installing..."
         sudo pacman -S "$pkg"
         return 0
     fi
 
-    # Try AUR if enabled
+    # Aur
     if [ "$use_aur" == "enabled" ] && command -v "$aur_manager" &>/dev/null && "$aur_manager" -Si "$pkg" &>/dev/null; then
         echo "Found in AUR! Installing via $aur_manager..."
         "$aur_manager" -S "$pkg"
         return 0
     fi
 
-    # Try Flatpak if enabled
+    # Flatpak
     if [ "$use_flatpak" == "enabled" ] && command -v flatpak &>/dev/null && flatpak search "$pkg" | grep -q "$pkg"; then
         echo "Found in Flatpak. Installing..."
         flatpak install -y "$pkg"
         return 0
     fi
 
-    # Try apt if enabled
+    # APT
     if [ "$use_apt" == "enabled" ] && command -v apt &>/dev/null && apt-cache show "$pkg" &>/dev/null; then
         echo "Found in apt! Installing..."
         sudo apt install "$pkg"
         return 0
     fi
 
-    # Try pkg if enabled (FreeBSD)
+    # PKG
     if [ "$use_pkg" == "enabled" ] && command -v pkg &>/dev/null && pkg search -q "^${pkg}$" &>/dev/null; then
         echo "Found in pkg! Installing..."
         sudo pkg install "$pkg"
         return 0
     fi
 
-    # If package not found, show error
+    # ERROR!
     if [ "$figlet_disabled" != "enabled" ]; then
         figlet "$figlet_error_text"
     fi
@@ -52,7 +52,7 @@ search_and_install() {
 CONFIG_DIR="$HOME/.config/pkgminor"
 CONFIG_FILE="$CONFIG_DIR/config.cfg"
 
-# Default configuration values
+# Default Config
 DEFAULT_CLEAR="enabled"
 DEFAULT_FIGLET_DISABLED="disabled"
 DEFAULT_FIGLET_GREETING="PKGMINOR"
@@ -65,7 +65,7 @@ DEFAULT_USE_FLATPAK="enabled"
 DEFAULT_USE_APT="disabled"
 DEFAULT_USE_PKG="disabled"
 
-# Create config directory if it doesn't exist
+# Create config directory
 if [ ! -d "$CONFIG_DIR" ]; then
     mkdir -p "$CONFIG_DIR"
 fi
@@ -90,7 +90,7 @@ EOF
     echo "Created default config at $CONFIG_FILE"
 fi
 
-# Load configuration values
+# Load config
 clear_screen="$DEFAULT_CLEAR"
 figlet_disabled="$DEFAULT_FIGLET_DISABLED"
 figlet_greeting_text="$DEFAULT_FIGLET_GREETING"
@@ -103,7 +103,7 @@ use_flatpak="$DEFAULT_USE_FLATPAK"
 use_apt="$DEFAULT_USE_APT"
 use_pkg="$DEFAULT_USE_PKG"
 
-# Read config file line by line
+# Read config
 while IFS= read -r line || [ -n "$line" ]; do
     # Skip comments and empty lines
     [[ "$line" =~ ^[[:space:]]*# || -z "$line" ]] && continue
@@ -140,17 +140,17 @@ if [ "$clear_screen" == "enabled" ]; then
     clear
 fi
 
-# Print debug info if needed (comment this out in production)
+# Debug
 # echo "Debug: figlet_greeting_text = '$figlet_greeting_text'"
 
-# Show greeting with figlet if enabled
+# First Figlet
 if [ "$figlet_disabled" != "enabled" ]; then
     figlet "$figlet_greeting_text"
 fi
 
 echo "______________________________________________"
 
-# Prompt for package name or use command line argument
+# Prompt for package name
 if [ $# -gt 0 ]; then
     # Use first argument as package name
     pkg="$1"
