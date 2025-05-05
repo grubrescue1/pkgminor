@@ -1,2 +1,2 @@
 # pkgminor
-A simple bash package helper.
+An simple one-file bash package helper.
