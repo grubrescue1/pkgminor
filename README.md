@@ -6,6 +6,7 @@ Use this command to install:
 ```
 curl -fsSl https://raw.githubusercontent.com/grubrescue1/pkgminor/refs/heads/main/pkgminorinstaller.sh | bash
 ```
+You can then run ```pkgminor``` from your terminal.
 # Usage
 Usage:
 ```
